@@ -65,13 +65,21 @@
       letter-spacing: 0.1em;
     }
 
+    #mainPanel {
+      position: relative;
+      padding-right: 340px;
+    }
+
     #controlPanel {
       background: white;
       padding: 10px 12px;
-      box-shadow: -4px 3px 10px -2px rgba(0, 0, 0, 0.6);
-      border-radius: 5px 0 0 5px;
+      box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.6);
+      border-radius: 5px;
       color: #000;
       width: 290px;
+      position: absolute;
+      right: 10px;
+      top: 10px;
     }
 
     label {
@@ -83,52 +91,139 @@
       width: 100%;
       box-sizing: border-box;
     }
+
+    #previewPanel {
+      padding: 20px;
+    }
+
+    #imageSrc {
+      max-width: 600px;
+      height: auto;
+    }
+
+    canvas {
+      background: white;
+    }
   </style>
 </head>
 
 <body>
   <main class="vertical layout">
     <h1>Rough Draw</h1>
-    <div class="flex horizontal layout">
-      <div class="flex"></div>
-      <div>
-        <div id="controlPanel">
-          <label>
-            Number of shapes
-            <span id="shapeValue"></span>
-            <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
-          </label>
-          <label>
-            Threshold
-            <span id="thresholdValue"></span>
-            <input id="threshold" type="range" min="0" max="250" step="1" value="110">
-          </label>
-          <label>
-            Simplification
-            <span id="simplificationValue"></span>
-            <input id="simplification" type="range" min="0" max="1" step="0.05" value="0.6">
-          </label>
+    <div id="mainPanel">
+      <div id="previewPanel">
+        <div class="inputoutput">
+          <img id="imageSrc" alt="No Image" />
+          <div class="caption">imageSrc
+            <input type="file" id="fileInput" name="file" />
+          </div>
         </div>
+        <div class="inputoutput">
+          <canvas id="canvas"></canvas>
+          <div class="caption">canvasOutput</div>
+        </div>
+      </div>
+      <div id="controlPanel">
+        <label>
+          Number of shapes
+          <span id="shapeValue"></span>
+          <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
+        </label>
+        <label>
+          Threshold
+          <span id="thresholdValue"></span>
+          <input id="threshold" type="range" min="0" max="250" step="1" value="110">
+        </label>
+        <label>
+          Simplification
+          <span id="simplificationValue"></span>
+          <input id="simplification" type="range" min="0" max="1" step="0.05" value="0.1">
+        </label>
       </div>
     </div>
   </main>
 
+  <script async src="../src/opencv/opencv.js" type="text/javascript"></script>
   <script type="module">
-    const cpanel = document.getElementById('controlPanel');
-    cpanel.addEventListener('input', onPanelChange);
-    cpanel.addEventListener('chnage', onPanelChange);
+    import { draw } from './src/draw.js';
+    import rough from '../node_modules/roughjs/bin/rough.js';
+
+    let _prevImage;
+    const sourceImage = $$("imageSrc");
+    const canvas = $$('canvas');
+    const cpanel = $$('controlPanel');
+    const rc = rough.canvas(canvas, {
+      options: {
+        fillStyle: 'hachure',
+        fillWeight: 3,
+        stroke: '#777'
+      }
+    });
+
+    function $$(id) { return document.getElementById(id); }
 
     function onPanelChange() {
       refreshLabels();
+      if (_prevImage) {
+        redraw();
+      }
     }
 
     function refreshLabels() {
-      document.getElementById('shapeValue').textContent = `(${document.getElementById('shapeCount').value})`;
-      document.getElementById('thresholdValue').textContent = `(${document.getElementById('threshold').value})`;
-      document.getElementById('simplificationValue').textContent = `(${(+document.getElementById('simplification').value).toFixed(2)})`;
+      $$('shapeValue').textContent = `(${$$('shapeCount').value})`;
+      $$('thresholdValue').textContent = `(${$$('threshold').value})`;
+      $$('simplificationValue').textContent = `(${(+$$('simplification').value).toFixed(2)})`;
     }
 
+    async function redraw() {
+      const out = await draw(sourceImage, +$$('shapeCount').value, +$$('threshold').value);
+      canvas.width = out.size[0];
+      canvas.height = out.size[1];
+      canvas.getContext('2d').clearRect(0, 0, out.size[0], out.size[1]);
+      const simplification = +$$('simplification').value;
+      for (const p of out.paths) {
+        const o = { fill: p.color, hachureAngle: Math.round(Math.random() * 360) };
+        if (simplification > 0 && simplification < 1) {
+          o.simplification = simplification;
+        }
+        rc.path(p.d, o);
+      }
+    }
+
+    function debounce(func, imFunct, wait, immediate, context) {
+      let timeout = 0;
+      return () => {
+        const args = arguments;
+        const later = () => {
+          timeout = 0;
+          if (!immediate) {
+            func.apply(context, args);
+          }
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = window.setTimeout(later, wait);
+        if (callNow) {
+          func.apply(context, args);
+        }
+        imFunct.apply(context, args);
+      };
+    }
+
+    cpanel.addEventListener('input', debounce(onPanelChange, refreshLabels, 250, false, this));
+    cpanel.addEventListener('chnage', debounce(onPanelChange, refreshLabels, 250, false, this));
     refreshLabels();
+
+    $$("fileInput").addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        if (_prevImage) {
+          URL.revokeObjectURL(_prevImage);
+        }
+        _prevImage = URL.createObjectURL(e.target.files[0]);
+        sourceImage.src = _prevImage;
+      }
+    });
+    sourceImage.onload = redraw;
   </script>
 </body>
 
