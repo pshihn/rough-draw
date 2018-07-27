@@ -1,4 +1,4 @@
-export async function draw(imageSource, shapeCount, thresholdValue, increaseContrast) {
+export async function draw(imageSource, shapeCount, thresholdValue, increaseContrast, inverseThreshold) {
   shapeCount = shapeCount || 15;
   thresholdValue = thresholdValue || 110;
 
@@ -18,7 +18,7 @@ export async function draw(imageSource, shapeCount, thresholdValue, increaseCont
   }
 
   // Apply thresholding
-  cv.threshold(temp, temp, thresholdValue, 255, cv.THRESH_BINARY);
+  cv.threshold(temp, temp, thresholdValue, 255, inverseThreshold ? cv.THRESH_BINARY_INV : cv.THRESH_BINARY);
 
   // Create contours
   const contours = new cv.MatVector();

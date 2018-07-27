@@ -139,6 +139,12 @@
           <span id="simplificationValue"></span>
           <input id="simplification" type="range" min="0" max="1" step="0.05" value="0.1">
         </label>
+        <label>
+          <input id="doublePass" type="checkbox"> Double pass extraction
+        </label>
+        <label>
+          <input id="contrast" type="checkbox"> Increase contrast
+        </label>
       </div>
     </div>
   </main>
@@ -176,12 +182,21 @@
     }
 
     async function redraw() {
-      const out = await draw(sourceImage, +$$('shapeCount').value, +$$('threshold').value);
+      let out = await draw(sourceImage, +$$('shapeCount').value, +$$('threshold').value, $$('contrast').checked);
       canvas.width = out.size[0];
       canvas.height = out.size[1];
       canvas.getContext('2d').clearRect(0, 0, out.size[0], out.size[1]);
       const simplification = +$$('simplification').value;
-      for (const p of out.paths) {
+      drawShapes(out, simplification);
+      const doublePass = $$('doublePass').checked;
+      if (doublePass) {
+        out = await draw(sourceImage, +$$('shapeCount').value, +$$('threshold').value, $$('contrast').checked, true);
+        drawShapes(out, simplification);
+      }
+    }
+
+    function drawShapes(data, simplification) {
+      for (const p of data.paths) {
         const o = { fill: p.color, hachureAngle: Math.round(Math.random() * 360) };
         if (simplification > 0 && simplification < 1) {
           o.simplification = simplification;
