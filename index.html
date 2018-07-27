@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <title>Rough Draw</title>
+  <meta name="description" content="...">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+      background: #263238;
+      color: #ffffff;
+    }
+
+    .layout.horizontal,
+    .layout.vertical {
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+    }
+
+    .layout.horizontal {
+      -ms-flex-direction: row;
+      -webkit-flex-direction: row;
+      flex-direction: row;
+    }
+
+    .layout.vertical {
+      -ms-flex-direction: column;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+    }
+
+    .layout.center,
+    .layout.center-center {
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    .flex {
+      -ms-flex: 1 1 0.000000001px;
+      -webkit-flex: 1;
+      flex: 1;
+      -webkit-flex-basis: 0.000000001px;
+      flex-basis: 0.000000001px;
+    }
+
+    main {
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 16px;
+      font-weight: 400;
+      font-size: 24px;
+      letter-spacing: 0.1em;
+    }
+
+    #controlPanel {
+      background: white;
+      padding: 10px 12px;
+      box-shadow: -4px 3px 10px -2px rgba(0, 0, 0, 0.6);
+      border-radius: 5px 0 0 5px;
+      color: #000;
+      width: 290px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="vertical layout">
+    <h1>Rough Draw</h1>
+    <div class="flex horizontal layout">
+      <div class="flex"></div>
+      <div>
+        <div id="controlPanel">
+          <label>
+            Number of shapes
+            <span id="shapeValue"></span>
+            <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
+          </label>
+          <label>
+            Threshold
+            <span id="thresholdValue"></span>
+            <input id="threshold" type="range" min="0" max="250" step="1" value="110">
+          </label>
+          <label>
+            Simplification
+            <span id="simplificationValue"></span>
+            <input id="simplification" type="range" min="0" max="1" step="0.05" value="0.6">
+          </label>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    const cpanel = document.getElementById('controlPanel');
+    cpanel.addEventListener('input', onPanelChange);
+    cpanel.addEventListener('chnage', onPanelChange);
+
+    function onPanelChange() {
+      refreshLabels();
+    }
+
+    function refreshLabels() {
+      document.getElementById('shapeValue').textContent = `(${document.getElementById('shapeCount').value})`;
+      document.getElementById('thresholdValue').textContent = `(${document.getElementById('threshold').value})`;
+      document.getElementById('simplificationValue').textContent = `(${(+document.getElementById('simplification').value).toFixed(2)})`;
+    }
+
+    refreshLabels();
+  </script>
+</body>
+
+</html>
