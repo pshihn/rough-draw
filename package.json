@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/pshihn/rough-draw#readme",
   "dependencies": {
-    "roughjs": "^2.2.5"
+    "@polymer/lit-element": "^0.5.2",
+    "@webcomponents/webcomponentsjs": "^2.0.3",
+    "roughjs": "^2.2.5",
+    "workly": "^1.0.1"
   }
 }
