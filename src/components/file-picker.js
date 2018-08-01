@@ -1,4 +1,4 @@
-import { AnElement, html } from './an-element';
+import { AnElement, html } from './an-element.js';
 
 export class FilePicker extends AnElement {
   static get properties() {

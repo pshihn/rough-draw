@@ -1,4 +1,4 @@
-import { AnElement, html } from './an-element';
+import { AnElement, html } from './an-element.js';
 
 export const MAP_REF = '__x_icon_map__';
 

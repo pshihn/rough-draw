@@ -1,5 +1,5 @@
-import { AnElement, html } from './an-element';
-import './checkbox';
+import { AnElement, html } from './an-element.js';
+import './checkbox.js';
 
 export class ControlPanel extends AnElement {
   _render({ shapeCount, threshold, simplify, doublePass }) {
@@ -57,7 +57,7 @@ export class ControlPanel extends AnElement {
     this.doublePass = this.$('doublePass');
     this.simplify = this.$('simplify');
     this.$('controlPanel').addEventListener('input', this.debounce(this.onPanelChange, this.refreshLabels, 250, false, this));
-    this.$('controlPanel').addEventListener('chnage', this.debounce(this.onPanelChange, this.refreshLabels, 250, false, this));
+    this.$('controlPanel').addEventListener('change', this.debounce(this.onPanelChange, this.refreshLabels, 250, false, this));
     this.refreshLabels();
   }
 
@@ -66,19 +66,24 @@ export class ControlPanel extends AnElement {
     this.thresholdValue.textContent = `(${this.threshold.value})`;
   }
 
-  onPanelChange() {
-    this.refreshLabels();
-    this.fireEvent('update', {
+  get settings() {
+    return {
       shapeCount: +this.shapeCount.value,
       threshold: +this.threshold.value,
       simplify: this.simplify.checked,
       doublePass: this.doublePass.checked
-    });
+    };
+  }
+
+  onPanelChange() {
+    this.refreshLabels();
+    this.fireEvent('update', this.settings);
   }
 
   debounce(func, imFunct, wait, immediate, context) {
     let timeout = 0;
     return () => {
+      console.log('change');
       const args = arguments;
       const later = () => {
         timeout = 0;

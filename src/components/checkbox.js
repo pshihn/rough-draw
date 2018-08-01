@@ -1,6 +1,6 @@
-import { AnElement, html } from './an-element';
+import { AnElement, html } from './an-element.js';
 import './icon.js';
-import './icon-defs';
+import './icon-defs.js';
 
 export class CheckBox extends AnElement {
   static get properties() {

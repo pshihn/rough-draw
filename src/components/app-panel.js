@@ -1,6 +1,8 @@
-import { AnElement, html } from './an-element';
-import './file-picker';
-import './control-panel';
+import { AnElement, html } from './an-element.js';
+import { draw } from '../draw.js';
+import { RoughCanvas } from '../../node_modules/roughjs/bin/canvas.js';
+import './file-picker.js';
+import './control-panel.js';
 
 export class AppPanel extends AnElement {
   _render() {
@@ -67,7 +69,7 @@ export class AppPanel extends AnElement {
           <canvas id="canvas"></canvas>
         </div>
         <div class="subPanel">
-          <control-panel></control-panel>
+          <control-panel on-update="${(e) => this.onUpdate(e)}"></control-panel>
         </div>
       </div>
     </div>
@@ -104,6 +106,46 @@ export class AppPanel extends AnElement {
   onImageLoad() {
     this.originalSection.style.height = 'auto';
     this.canvasSection.style.height = 0;
+    this.redraw(this.controls.settings);
+  }
+
+  onUpdate(event) {
+    this.redraw(this.prevImageUrl && event.detail);
+  }
+
+  async redraw(settings) {
+    if (settings) {
+      let out = await draw(this.image, settings.shapeCount, settings.threshold, false, false);
+      this.canvas.width = out.size[0];
+      this.canvas.height = out.size[1];
+      this.canvas.getContext('2d').clearRect(0, 0, out.size[0], out.size[1]);
+      this.drawShapes(out, settings.simplify);
+      if (settings.doublePass) {
+        out = await draw(this.image, settings.shapeCount, settings.threshold, false, true);
+        this.drawShapes(out, settings.simplify);
+      }
+      this.originalSection.style.height = 0;
+      this.canvasSection.style.height = 'auto';
+    }
+  }
+
+  drawShapes(data, simplify) {
+    if (!this.rc) {
+      this.rc = new RoughCanvas(this.canvas, {
+        options: {
+          fillStyle: 'hachure',
+          fillWeight: 3,
+          stroke: '#777'
+        }
+      });
+    }
+    for (const p of data.paths) {
+      const o = { fill: p.color, hachureAngle: Math.round(Math.random() * 360) };
+      if (simplify) {
+        o.simplification = 0.1;
+      }
+      this.rc.path(p.d, o);
+    }
   }
 }
 customElements.define('app-panel', AppPanel);
