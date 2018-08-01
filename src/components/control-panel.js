@@ -27,17 +27,31 @@ export class ControlPanel extends AnElement {
         width: 100%;
         box-sizing: border-box;
       }
+
+      button {
+        font-family: inherit;
+        font-size: 15px;
+        padding: 8px 15px;
+        text-transform: uppercase;
+        border: none;
+        background: var(--highlight-blue);
+        color: white;
+        margin-top: 15px;
+        border-radius: 3px;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+      }
     </style>
     <div id="controlPanel">
-      <label>
-        Number of shapes
-        <span id="shapeValue"></span>
-        <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
-      </label>
       <label>
         Threshold
         <span id="thresholdValue"></span>
         <input id="threshold" type="range" min="0" max="250" step="1" value="110">
+      </label>
+      <label>
+        Number of shapes
+        <span id="shapeValue"></span>
+        <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
       </label>
       <label>
         <check-box id="doublePass" checked>Double pass extraction</check-box>
@@ -45,6 +59,9 @@ export class ControlPanel extends AnElement {
       <label>
         <check-box id="simplify" checked>Simplify shape</check-box>
       </label>
+      <div>
+        <button on-click="${() => this.fireEvent('clear')}">Clear</button>
+      </div>
     </div>
     `;
   }
@@ -75,6 +92,14 @@ export class ControlPanel extends AnElement {
     };
   }
 
+  reset() {
+    this.threshold.value = 110;
+    this.shapeCount.value = 15;
+    this.doublePass.checked = true;
+    this.simplify.checked = true;
+    this.refreshLabels();
+  }
+
   onPanelChange() {
     this.refreshLabels();
     this.fireEvent('update', this.settings);
@@ -83,7 +108,6 @@ export class ControlPanel extends AnElement {
   debounce(func, imFunct, wait, immediate, context) {
     let timeout = 0;
     return () => {
-      console.log('change');
       const args = arguments;
       const later = () => {
         timeout = 0;

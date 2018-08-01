@@ -52,6 +52,7 @@ export class AppPanel extends AnElement {
         display: block;
         box-sizing: border-box;
         max-width: 500px;
+        max-height: 500px;
         margin: 0 auto;
       }
     </style>
@@ -69,7 +70,7 @@ export class AppPanel extends AnElement {
           <canvas id="canvas"></canvas>
         </div>
         <div class="subPanel">
-          <control-panel on-update="${(e) => this.onUpdate(e)}"></control-panel>
+          <control-panel on-update="${(e) => this.onUpdate(e)}" on-clear="${() => this.clearImage()}"></control-panel>
         </div>
       </div>
     </div>
@@ -83,6 +84,19 @@ export class AppPanel extends AnElement {
     this.canvas = this.$('canvas');
     this.image = this.$('img');
     this.controls = this.$$('control-panel');
+    this.filePicker = this.$('filePicker');
+  }
+
+  clearImage() {
+    if (this.prevImageUrl) {
+      URL.revokeObjectURL(this.prevImageUrl);
+    }
+    this.prevImageUrl = null;
+    this.filePicker.clear();
+    this.originalSection.style.height = 0;
+    this.canvasSection.style.height = 0;
+    this.main.classList.remove('hasFile');
+    this.controls.reset();
   }
 
   onFiles(e) {
