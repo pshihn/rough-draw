@@ -1,45 +1,26 @@
 import { AnElement, html } from './an-element';
+import './checkbox';
 
 export class ControlPanel extends AnElement {
-  static get properties() {
-    return {
-      shapeCount: Number,
-      threshold: Number,
-      simplify: Boolean,
-      doublePass: Boolean
-    }
-  }
-
-  constructor() {
-    super();
-    this.shapeCount = 15;
-    this.threshold = 110;
-    this.simplify = true;
-    this.doublePass = false;
-  }
-
   _render({ shapeCount, threshold, simplify, doublePass }) {
     return html`
     <style>
       :host {
-        display: block;
+        text-align: left;
       }
 
       #controlPanel {
-        background: white;
-        padding: 10px 12px;
-        box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.6);
-        border-radius: 5px;
-        color: #000;
-        width: 290px;
-        position: absolute;
-        right: 10px;
-        top: 10px;
+        max-width: 500px;
+        margin: 0 auto;
       }
 
       label {
         display: block;
         margin: 10px 0;
+      }
+
+      label span {
+        color: var(--highlight-pink);
       }
 
       input[type="range"] {
@@ -51,21 +32,68 @@ export class ControlPanel extends AnElement {
       <label>
         Number of shapes
         <span id="shapeValue"></span>
-        <input id="shapeCount" type="range" min="1" max="50" step="1" value$="${shapeCount}">
+        <input id="shapeCount" type="range" min="1" max="50" step="1" value="15">
       </label>
       <label>
         Threshold
         <span id="thresholdValue"></span>
-        <input id="threshold" type="range" min="0" max="250" step="1" value$="${threshold}">
+        <input id="threshold" type="range" min="0" max="250" step="1" value="110">
       </label>
       <label>
-        <input id="doublePass" type="checkbox" checked?="${doublePass}"> Double pass extraction
+        <check-box id="doublePass" checked>Double pass extraction</check-box>
       </label>
       <label>
-        <input id="simplify" type="checkbox" checked?="${simplify}"> Simplify shape
+        <check-box id="simplify" checked>Simplify shape</check-box>
       </label>
     </div>
     `;
+  }
+
+  _firstRendered() {
+    this.shapeValue = this.$('shapeValue');
+    this.thresholdValue = this.$('thresholdValue');
+    this.shapeCount = this.$('shapeCount');
+    this.threshold = this.$('threshold');
+    this.doublePass = this.$('doublePass');
+    this.simplify = this.$('simplify');
+    this.$('controlPanel').addEventListener('input', this.debounce(this.onPanelChange, this.refreshLabels, 250, false, this));
+    this.$('controlPanel').addEventListener('chnage', this.debounce(this.onPanelChange, this.refreshLabels, 250, false, this));
+    this.refreshLabels();
+  }
+
+  refreshLabels() {
+    this.shapeValue.textContent = `(${this.shapeCount.value})`;
+    this.thresholdValue.textContent = `(${this.threshold.value})`;
+  }
+
+  onPanelChange() {
+    this.refreshLabels();
+    this.fireEvent('update', {
+      shapeCount: +this.shapeCount.value,
+      threshold: +this.threshold.value,
+      simplify: this.simplify.checked,
+      doublePass: this.doublePass.checked
+    });
+  }
+
+  debounce(func, imFunct, wait, immediate, context) {
+    let timeout = 0;
+    return () => {
+      const args = arguments;
+      const later = () => {
+        timeout = 0;
+        if (!immediate) {
+          func.apply(context, args);
+        }
+      };
+      const callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = window.setTimeout(later, wait);
+      if (callNow) {
+        func.apply(context, args);
+      }
+      imFunct.apply(context, args);
+    };
   }
 }
 customElements.define('control-panel', ControlPanel);
