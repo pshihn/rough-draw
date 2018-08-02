@@ -47,8 +47,14 @@
   </main>
 
   <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script async src="../src/opencv/opencv.js" type="text/javascript"></script>
   <script type="module" src="./src/components/app-panel.js"></script>
+  <script async src="../src/opencv/opencv.js" type="text/javascript" onload="onOpenCVLoad()"></script>
+  <script>
+    function onOpenCVLoad() {
+      window.opencvLoaded = true;
+      window.dispatchEvent(new CustomEvent('opencv-load'));
+    }
+  </script>
 </body>
 
 </html>

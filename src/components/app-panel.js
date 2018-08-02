@@ -55,11 +55,18 @@ export class AppPanel extends AnElement {
         max-height: 500px;
         margin: 0 auto;
       }
+      #loadingPanel {
+        padding: 20px 16px;
+        text-align: center;
+      }
     </style>
-    <div id="main">
+    <div id="main" style="display: none;">
       <div id="noFilePanel">
         <file-picker id="filePicker" on-files="${(e) => this.onFiles(e)}"></file-picker>
         <div class="subPanel">
+          <div class="message">
+            Select an image to render it in a sketchy hand-drawn fashion.
+          </div>
         </div>
       </div>
       <div id="canvasPanel">
@@ -74,6 +81,7 @@ export class AppPanel extends AnElement {
         </div>
       </div>
     </div>
+    <div id="loadingPanel">Loading OpenCV module...</div>
     `;
   }
 
@@ -85,6 +93,17 @@ export class AppPanel extends AnElement {
     this.image = this.$('img');
     this.controls = this.$$('control-panel');
     this.filePicker = this.$('filePicker');
+    this.loadingPanel = this.$('loadingPanel');
+    if (window.opencvLoaded) {
+      this.openCVReady();
+    } else {
+      window.addEventListener('opencv-load', () => this.openCVReady());
+    }
+  }
+
+  openCVReady() {
+    this.loadingPanel.style.display = 'none';
+    this.main.style.display = 'block';
   }
 
   clearImage() {

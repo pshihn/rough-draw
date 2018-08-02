@@ -41,8 +41,15 @@ export class ControlPanel extends AnElement {
         cursor: pointer;
         letter-spacing: 0.05em;
       }
+      .message {
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
     </style>
     <div id="controlPanel">
+      <div class="message">
+        Adjust the threshold to get the best results for your image. (A threshold range from 90-150 provides the best results for most images.)
+      </div>
       <label>
         Threshold
         <span id="thresholdValue"></span>
