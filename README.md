@@ -3,6 +3,8 @@ Rough Draw creates a sketchy, hand-drawn version of any image using RoughJS and 
 
 [Visit Website](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) to try it. 
 
+![Simpsons sample](https://pshihn.github.io/rough-draw/images/s6.png)
+
 ## Technique
 
 OpenCV is used to detect shapes (contours) in an image. At first, the image is transformed to grayscale and then a threshold function is applied.
@@ -15,3 +17,5 @@ The contour points are then passed to RoughJS which renders a sketchy version of
 
 ## License
 [MIT License](https://github.com/pshihn/rough-draw/blob/master/LICENSE) (c) [Preet Shihn](https://twitter.com/preetster)
+
+![Preet sample](https://pshihn.github.io/rough-draw/images/preet.png)
