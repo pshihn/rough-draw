@@ -1,0 +1,30 @@
+{
+  "name": "rough-draw",
+  "version": "0.1.0",
+  "description": "Experiment to turn images/gifs/videos to sketchy versions using rough.js",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pshihn/rough-draw.git"
+  },
+  "author": "Preet Shihn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pshihn/rough-draw/issues"
+  },
+  "homepage": "https://github.com/pshihn/rough-draw#readme",
+  "dependencies": {
+    "@polymer/lit-element": "^0.5.2",
+    "@webcomponents/webcomponentsjs": "^2.0.3",
+    "roughjs": "^2.2.5"
+  },
+  "devDependencies": {
+    "rollup": "^0.63.5",
+    "rollup-plugin-babel-minify": "^5.0.0",
+    "rollup-plugin-node-resolve": "^3.3.0"
+  }
+}
