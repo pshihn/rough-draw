@@ -15,7 +15,7 @@ Contours are then extracted from the image followed by extracting the average co
 
 The contour points are then passed to RoughJS which renders a sketchy version of the shape. The shape is then hachure-filled with the shape's average color.
 
+![technique](https://pshihn.github.io/rough-draw/images/technique.jpg)
+
 ## License
 [MIT License](https://github.com/pshihn/rough-draw/blob/master/LICENSE) (c) [Preet Shihn](https://twitter.com/preetster)
-
-![Preet sample](https://pshihn.github.io/rough-draw/images/preet.png)
