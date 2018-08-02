@@ -33,6 +33,26 @@
       letter-spacing: 0.1em;
       text-align: center;
     }
+
+    h2 {
+      font-weight: 400;
+      font-size: 24px;
+      color: #263238;
+    }
+
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    a,
+    a:hover,
+    a:visited {
+      color: inherit;
+      text-decoration: none;
+      box-shadow: 0 2px #F48FB1;
+    }
   </style>
 </head>
 
@@ -44,10 +64,26 @@
     <section class="dark">
       <app-panel></app-panel>
     </section>
+    <section class="content">
+      <p>Rough Draw creates a sketchy, hand-drawn version of any image using
+        <a href="https://roughjs.com/" target="_blank" rel="noopener">RoughJS</a> and a
+        <a href="https://developer.mozilla.org/en-US/docs/WebAssembly" target="_blank" rel="noopener">WASM</a> version of
+        <a href="https://opencv.org/" target="_blank" rel="noopener">OpenCV</a>.</p>
+      <h2>Technique</h2>
+      <p>OpenCV is used to detect shapes (contours) in an image. At first, the image is transformed to grayscale and then a
+        threshold function is applied.</p>
+      <p>If
+        <em>double pass</em> is selected, an inverse threshold is also applied. Think of a double pass akin to applying a low-pass
+        and a high-pass filter to a signal.</p>
+      <p>Contours are then extracted from the image followed by extracting the average color inside that contour.</p>
+      <p>The contour points are then passed to RoughJS which renders a sketchy version of the shape. The shape is then hachure-filled
+        with the shape's average color.</p>
+    </section>
   </main>
 
   <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script type="module" src="./src/components/app-panel.js"></script>
+  <!-- <script type="module" src="./src/components/app-panel.js"></script> -->
+  <script type="module" async src="./dist/bundled.js"></script>
   <script async src="../src/opencv/opencv.js" type="text/javascript" onload="onOpenCVLoad()"></script>
   <script>
     function onOpenCVLoad() {
