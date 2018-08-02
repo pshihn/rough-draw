@@ -1,7 +1,7 @@
 # Rough Draw
 Rough Draw creates a sketchy, hand-drawn version of any image using RoughJS and a WASM version of OpenCV.
 
-[Visit Website](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) to try it. 
+[Visit Website](https://pshihn.github.io/rough-draw/) to try it. 
 
 ![Simpsons sample](https://pshihn.github.io/rough-draw/images/s6.png)
 
